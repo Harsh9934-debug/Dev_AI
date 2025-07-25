@@ -1,17 +1,24 @@
-import { getQueryClient,trpc } from "@/trpc/routers/server";
-import { dehydrate,HydrationBoundary } from "@tanstack/react-query";
-import { Client } from "./client";
-import { Suspense } from "react";
-const page = async () =>{
-  const queryClient = getQueryClient();
-  void queryClient.prefetchQuery(trpc.createAI.queryOptions({ text: "Harsh prefetch"}));
-  return(
-    <HydrationBoundary state={dehydrate(queryClient)}>
-       <Suspense>
-        <Client />
-       </Suspense>
-    </HydrationBoundary>
-  ); 
+"use client";
+
+import { toast } from "sonner";
+import { useMutation } from "@tanstack/react-query";
+import { useTRPC } from "@/trpc/routers/client";
+import { Button } from "@/components/ui/button";
+
+const page = () =>{
+  const trpc  = useTRPC();
+  const invoke  = useMutation(trpc.invoke.mutationOptions({
+    onSuccess: () => {
+      toast.success("Background job started")
+    }
+  }));
+ return (
+  <div className="p-4 max-w-7xl mx-auto">
+    <Button disabled={invoke.isPending} onClick ={()=> invoke.mutate({text:"Harsh"})}>
+      Invoke Backgroud Job
+    </Button>
+  </div>
+ );
 }
 
 export default page;
