@@ -15,7 +15,7 @@ export const helloWorld = inngest.createFunction(
       `write the fllowing snippet: ${event.data.value}`,
     );
 
-    return { success:"ok" };
+    return { output };
 
   },
 );
